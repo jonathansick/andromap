@@ -24,7 +24,7 @@ def main():
 
     pngpath = os.path.expanduser("~/andromap/Elixir_B3_r.resamp.inverted.png")
     fitspath = os.path.expanduser("~/andromap/Elixir_B3_r.resamp.fits")
-    m = Andromap(fitspath, figsize=(6.5, 6.5))
+    m = Andromap(fitspath, figsize=(3.5, 3.5))
     m.fig.show_rgb(pngpath)
     m.plot_combined_fields({"INSTRUME": "WIRCam", "TYPE": "sci"})
     m.plot_combined_fields({"INSTRUME": "WIRCam", "TYPE": "sky",
