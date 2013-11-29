@@ -6,6 +6,8 @@ Get footprints from the image log
 2013-11-28 - Created by Jonathan Sick
 """
 
+import logging
+
 from pymongo import MongoClient
 from shapely.geometry import Polygon, MultiPolygon
 from shapely.ops import cascaded_union
@@ -21,10 +23,12 @@ def get_combined_image_footprint(sel):
         A list of one or more Nx2 Numpy arrays which contain the [x, y]
         positions of the vertices in world coordinates.
     """
+    log = logging.getLogger('andromap')
     client = MongoClient(host='localhost', port=27017)
     c = client.m31.images
     docs = c.find(sel, fields=['footprint'])
-    print "Found %i footprints" % docs.count()
+    log.debug("Looking for footprints from %s" % str(sel))
+    log.debug("Found %i footprints" % docs.count())
     if docs.count() == 0:
         return None
     polygons = [doc['footprint'] for doc in docs]
