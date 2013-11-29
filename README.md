@@ -13,6 +13,19 @@ Dependencies
 - aplpy
 - pyavm
 - shapely
+- PIL
+
+Basemaps
+--------
+
+By convention, store image basemaps in `~/andromap`. Someday the basemaps will
+cached on S3.
+
+Scripts
+-------
+
+Scripts generate pre-defined maps for publications/talks. These will be listed
+here.
 
 Info
 ----
