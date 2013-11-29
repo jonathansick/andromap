@@ -27,6 +27,11 @@ def main():
     m = Andromap(fitspath, figsize=(6.5, 6.5))
     m.fig.show_rgb(pngpath)
     m.plot_combined_fields({"INSTRUME": "WIRCam", "TYPE": "sci"})
+    m.plot_combined_fields({"INSTRUME": "WIRCam", "TYPE": "sky",
+        "RUNID": {"$in": ['07BC20', '07BH47']}})
+    m.plot_combined_fields({"INSTRUME": "WIRCam", "TYPE": "sky",
+        "RUNID": {"$in": ['09BH52', '09BC29', '11BC12', '12BH04']}})
+    m.plot_combined_fields({"INSTRUME": "MegaPrime", "lsb_mosaic.kind": "sci"})
     m.save("andromap_test.pdf", dpi=300, transparent=True, adjust_bbox=True,
             format='pdf')
 
