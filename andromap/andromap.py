@@ -42,7 +42,8 @@ class Andromap(object):
             # Let Aplpy set it all up
             self._f = aplpy.FITSFigure(fitspath, figsize=figsize,
                     subplot=self._subplot, **kw)
-        self._f.set_system_latex('False')
+        self._f.set_system_latex('True')
+        self._f.set_tick_labels_format(xformat='hh:mm',yformat='dd')
 
     @property
     def fig(self):
