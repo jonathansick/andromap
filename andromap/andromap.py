@@ -18,29 +18,30 @@ class Andromap(object):
         Path to a FITS image (or a AVM-enabled JPG/PNG image).
     fig : Figure
         A matplotlib Figure instance to plot into
-    bounds : list
-        Bounds of a sub-axes to plot into, given a ``fig``. The bounds are
-        given by ``[xmin, ymin, dx, dy]``.
+    subplot : list
+        Either: a length-4 list giving bounds of a sub-axes to plot into,
+        given a ``fig``. The bounds are given by ``[xmin, ymin, dx, dy]``.
+        A length-3 list gives the matplotlib-style subplot index.
     figsize : tuple
         Size figure, inches, (width, height).
     kw :
         Arguments passed directly to the ``aplpy.FITSFigure`` constructor.
     """
-    def __init__(self, fitspath, fig=None, bounds=None, figsize=(3.5, 3.5),
-            **kw):
+    def __init__(self, fitspath, fig=None, subplot=(1, 1, 1),
+            figsize=(3.5, 3.5), **kw):
         super(Andromap, self).__init__()
         self.fitspath = fitspath
         self._figure = fig
-        self._subplot_bounds = bounds
+        self._subplot = subplot
 
         if (self._figure is not None) and (self._subplot_bounds is not None):
             # Put Aplpy axes into an existing axis
             self._f = aplpy.FITSFigure(fitspath, figure=self._figure,
-                    subplot=self._subplot_bounds, **kw)
+                    subplot=self._subplot, **kw)
         else:
             # Let Aplpy set it all up
             self._f = aplpy.FITSFigure(fitspath, figsize=figsize,
-                    subplot=bounds, **kw)
+                    subplot=self._subplot, **kw)
         self._f.set_system_latex('False')
 
     @property
@@ -48,13 +49,13 @@ class Andromap(object):
         """The Aplypy FITSFigure instance"""
         return self._f
     
-    def save(self, path, dpi=300, transparent=False, adjust_bbox=False,
+    def save(self, path, dpi=300, transparent=False, adjust_bbox=True,
             max_dpi=300, format='pdf'):
         """Save the figure."""
         if not path.endswith(format):
             path = path + "." + format
         dirname = os.path.dirname(path)
-        if not os.path.exists(dirname):
+        if dirname is not "" and not os.path.exists(dirname):
             os.makedirs(dirname)
         if self._figure is not None:
             # Save through matplotlib
