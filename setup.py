@@ -1,15 +1,14 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-from ez_setup import use_setuptools
-use_setuptools()
-
 from setuptools import setup, find_packages
+
+
 setup(
     name = "andromap",
     version = "0.1",
     packages = find_packages(),
-    # scripts = ['say_hello.py'],
+    scripts = ['scripts/andromap_test.py'],
 
     # Project uses reStructuredText, so ensure that the docutils get
     # installed or upgraded on the target machine
