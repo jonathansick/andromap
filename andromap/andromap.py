@@ -6,8 +6,8 @@ import os
 
 import aplpy
 
-from .imagelogfootprints import get_combined_image_footprint
-
+from .imagelogfootprints import get_combined_image_footprint, \
+    get_phat_bricks, get_combined_phat_bricks
 
 class Andromap(object):
     """This class plots ANDROIDS maps/footprints with an image using Aplpy.
@@ -42,6 +42,8 @@ class Andromap(object):
             # Let Aplpy set it all up
             self._f = aplpy.FITSFigure(fitspath, figsize=figsize,
                     subplot=self._subplot, **kw)
+
+        # Set up typography
         self._f.set_system_latex('True')
         self._f.set_tick_labels_format(xformat='hh:mm',yformat='dd')
 
@@ -70,5 +72,15 @@ class Andromap(object):
     def plot_combined_fields(self, sel, layer=False, zorder=None, **mpl):
         """Plot unions of image footprints."""
         polygons = get_combined_image_footprint(sel)
+        if polygons is None: return
+        self._f.show_polygons(polygons, layer=layer, zorder=zorder, **mpl)
+
+    def plot_phat(self, union=True, layer=False, zorder=None, **mpl):
+        """Plot the PHAT footprint."""
+        if union:
+            polygons = get_combined_phat_bricks()
+        else:
+            polydict = get_phat_bricks()
+            polygons = [p for n, p in polydict.iteritems()]
         if polygons is None: return
         self._f.show_polygons(polygons, layer=layer, zorder=zorder, **mpl)
