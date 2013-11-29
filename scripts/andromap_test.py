@@ -16,6 +16,7 @@ def main():
     fitspath = os.path.expanduser("~/andromap/Elixir_B3_r.resamp.fits")
     m = Andromap(fitspath, figsize=(6.5, 6.5))
     m.fig.show_rgb(pngpath)
+    m.plot_combined_fields({"INSTRUME": "WIRCam", "TYPE": "sci"})
     m.save("andromap_test.pdf", dpi=300, transparent=True, adjust_bbox=True,
             format='pdf')
 

@@ -24,6 +24,7 @@ def get_combined_image_footprint(sel):
     client = MongoClient(host='localhost', port=27017)
     c = client.m31.images
     docs = c.find(sel, fields=['footprint'])
+    print "Found %i footprints" % docs.count()
     if docs.count() == 0:
         return None
     polygons = [doc['footprint'] for doc in docs]
