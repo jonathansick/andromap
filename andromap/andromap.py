@@ -6,6 +6,8 @@ import os
 
 import aplpy
 
+from .imagelogfootprints import get_combined_image_footprint
+
 
 class Andromap(object):
     """This class plots ANDROIDS maps/footprints with an image using Aplpy.
@@ -40,6 +42,11 @@ class Andromap(object):
             self._f = aplpy.FITSFigure(fitspath, figsize=figsize,
                     subplot=bounds, **kw)
         self._f.set_system_latex('False')
+
+    @property
+    def fig(self):
+        """The Aplypy FITSFigure instance"""
+        return self._f
     
     def save(self, path, dpi=300, transparent=False, adjust_bbox=False,
             max_dpi=300, format='pdf'):
@@ -57,3 +64,9 @@ class Andromap(object):
             self._f.save(path, dpi=dpi, transparent=transparent,
                     adjust_bbox=adjust_bbox,
                     max_dpi=max_dpi, format=format)
+
+    def plot_combined_fields(self, sel, layer=False, zorder=None, **mpl):
+        """Plot unions of image footprints."""
+        polygons = get_combined_image_footprint(sel)
+        if polygons is None: return
+        self._f.show_polygons(polygons, layer=layer, zorder=zorder, **mpl)
