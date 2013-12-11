@@ -3,11 +3,15 @@
 """Maps of the ANDROIDS survey using Aplpy."""
 
 import os
+import logging
+import json
 
 import aplpy
 
 from .imagelogfootprints import get_combined_image_footprint, \
     get_phat_bricks, get_combined_phat_bricks
+from .polytools import close_vertices, polygon_union
+
 
 class Andromap(object):
     """This class plots ANDROIDS maps/footprints with an image using Aplpy.
@@ -33,6 +37,7 @@ class Andromap(object):
         self.fitspath = fitspath
         self._figure = fig
         self._subplot = subplot
+        self._log = logging.getLogger('andromap')
 
         if (self._figure is not None) and (self._subplot_bounds is not None):
             # Put Aplpy axes into an existing axis
@@ -83,4 +88,20 @@ class Andromap(object):
             polydict = get_phat_bricks()
             polygons = [p for n, p in polydict.iteritems()]
         if polygons is None: return
+        self._f.show_polygons(polygons, layer=layer, zorder=zorder, **mpl)
+
+    def plot_narrowband_fields(self, names, union=True, layer=False,
+        zorder=None, **mpl):
+        """Plot named narrowband fields."""
+        if isinstance(names, str) or isinstance(names, unicode):
+            names = [names]
+        data_path = os.path.join(os.path.abspath(os.path.dirname(__file__)),
+                "data/narrowband_fields.json")
+        self._log.debug("Data path: {path}".format(path=data_path))
+        with open(data_path) as f:
+            field_data = json.loads(f.read())
+        polygons = [field_data[n] for n in names]
+        if union:
+            polygons = [close_vertices(p) for p in polygons]
+            polygons = polygon_union(polygons)
         self._f.show_polygons(polygons, layer=layer, zorder=zorder, **mpl)

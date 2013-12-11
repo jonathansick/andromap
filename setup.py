@@ -8,7 +8,7 @@ setup(
     name = "andromap",
     version = "0.1",
     packages = find_packages(),
-    scripts = ['scripts/andromap_test.py'],
+    scripts = ['scripts/*.py'],
 
     # Project uses reStructuredText, so ensure that the docutils get
     # installed or upgraded on the target machine
