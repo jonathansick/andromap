@@ -9,9 +9,9 @@ Get footprints from the image log
 import logging
 
 from pymongo import MongoClient
-from shapely.geometry import Polygon, MultiPolygon
-from shapely.ops import cascaded_union
 import numpy as np
+
+from .polytools import close_vertices, polygon_union
 
 
 def get_combined_image_footprint(sel):
@@ -33,7 +33,7 @@ def get_combined_image_footprint(sel):
         return None
     polygons = [doc['footprint'] for doc in docs]
     polygons = [close_vertices(p) for p in polygons]
-    return compute_polygon_union(polygons)
+    return polygon_union(polygons)
 
 
 def get_phat_bricks(bricks=None):
@@ -73,26 +73,4 @@ def get_combined_phat_bricks(bricks=None):
     """
     polys = get_phat_bricks(bricks=bricks)
     polylist = [p for name, p in polys.iteritems()]
-    polygon_unions = compute_polygon_union(polylist)
-    return polygon_unions
-
-
-def close_vertices(polygon):
-    """Make the last vertex the same as the first."""
-    polygon.append(polygon[0])
-    return polygon
-
-
-def compute_polygon_union(polygons):
-    """Make the union of polygons. Returns a list of all isolated polygon
-    unions."""
-    shapely_polys = [Polygon(p) for p in polygons]
-    multipoly = MultiPolygon(shapely_polys)
-    u = cascaded_union(multipoly)
-    if isinstance(u, MultiPolygon):
-        vert_seq = []
-        for p in u:
-            vert_seq.append(np.array(p.exterior.coords[:]))
-        return vert_seq
-    else:
-        return [np.array(u.exterior.coords[:])]
+    return polygon_union(polylist)
