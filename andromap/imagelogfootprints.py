@@ -74,3 +74,24 @@ def get_combined_phat_bricks(bricks=None):
     polys = get_phat_bricks(bricks=bricks)
     polylist = [p for name, p in polys.iteritems()]
     return polygon_union(polylist)
+
+
+def get_acs_halo_fields():
+    """Get polygons for the Brown et al HST halo fields.
+
+    Returns
+    -------
+    fields : dict
+        Dictionary of {field number : polygon vertices}.
+    """
+    log = logging.getLogger('andromap')
+    sel = {"survey": "brown"}
+    client = MongoClient(host='localhost', port=27017)
+    c = client.m31.images
+    docs = c.find(sel)
+    log.debug("Looking for footprints from %s" % str(sel))
+    log.debug("Found %i footprints" % docs.count())
+    polygons = {}
+    for d in docs:
+        polygons[d['field']] = np.array(close_vertices(d['footprint']))
+    return polygons
