@@ -90,6 +90,27 @@ class Andromap(object):
         if polygons is None: return
         self._f.show_polygons(polygons, layer=layer, zorder=zorder, **mpl)
 
+    def plot_phat_fields(self, bricks=None, fields=None, union=True,
+            layer=False, zorder=None, **mpl):
+        """Plot the PHAT footprint from individual field footprints rather than
+        brick-by-brick.
+        
+        Parameters
+        ----------
+        bricks : list
+            List of brick numbers (integers) to plot
+        fields : list
+            List of field number (integers) from bricks to plot.
+        """
+        sel = {"survey": "PHAT"}
+        if bricks is not None:
+            sel['brick'] = {"$in": bricks}
+        if fields is not None:
+            sel['field'] = {"$in": fields}
+        polygons = get_combined_image_footprint(sel)
+        if polygons is None: return
+        self._f.show_polygons(polygons, layer=layer, zorder=zorder, **mpl)
+
     def plot_hst_halo(self, union=True, layer=False, zorder=None, **mpl):
         """Plot the Brown et al HST/ACS halo footprints."""
         polydict = get_acs_halo_fields()
