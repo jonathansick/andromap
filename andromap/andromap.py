@@ -90,19 +90,21 @@ class Andromap(object):
         if polygons is None: return
         self._f.show_polygons(polygons, layer=layer, zorder=zorder, **mpl)
 
-    def plot_phat_fields(self, bricks=None, fields=None, union=True,
-            layer=False, zorder=None, **mpl):
+    def plot_phat_fields(self, band="F160W", bricks=None, fields=None,
+            union=True, layer=False, zorder=None, **mpl):
         """Plot the PHAT footprint from individual field footprints rather than
         brick-by-brick.
         
         Parameters
         ----------
+        band : str
+            Name of bandpass to search for
         bricks : list
             List of brick numbers (integers) to plot
         fields : list
             List of field number (integers) from bricks to plot.
         """
-        sel = {"survey": "PHAT"}
+        sel = {"survey": "PHAT", "FILTER": band}
         if bricks is not None:
             sel['brick'] = {"$in": bricks}
         if fields is not None:

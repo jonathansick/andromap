@@ -32,8 +32,9 @@ def main():
     m.plot_combined_fields({"INSTRUME": "WIRCam", "TYPE": "sky",
         "RUNID": {"$in": ['09BH52', '09BC29', '11BC12', '12BH04']}})
     m.plot_combined_fields({"INSTRUME": "MegaPrime", "lsb_mosaic.kind": "sci"})
-    m.plot_phat(union=True)
-    m.plot_phat_fields(union=True, edgecolor='r', zorder=10)
+    # m.plot_phat(union=True)
+    m.plot_phat_fields(union=False, edgecolor='None', facecolor='r',
+        zorder=10, alpha=0.2)
     m.plot_hst_halo()
     m.save("andromap_test.pdf", dpi=300, transparent=True, adjust_bbox=True,
             format='pdf')
