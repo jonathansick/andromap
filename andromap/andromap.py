@@ -9,7 +9,8 @@ import json
 import aplpy
 
 from .imagelogfootprints import get_combined_image_footprint, \
-    get_phat_bricks, get_combined_phat_bricks, get_acs_halo_fields
+    get_phat_bricks, get_combined_phat_bricks, get_acs_halo_fields, \
+    get_image_footprints
 from .polytools import close_vertices, polygon_union
 
 
@@ -109,9 +110,14 @@ class Andromap(object):
             sel['brick'] = {"$in": bricks}
         if fields is not None:
             sel['field'] = {"$in": fields}
-        polygons = get_combined_image_footprint(sel)
-        if polygons is None: return
-        self._f.show_polygons(polygons, layer=layer, zorder=zorder, **mpl)
+        if union:
+            polygons = get_combined_image_footprint(sel)
+            if polygons is None: return
+            self._f.show_polygons(polygons, layer=layer, zorder=zorder, **mpl)
+        else:
+            footprints = get_image_footprints(sel)
+            polys = [v for k, v in footprints.iteritems()]
+            self._f.show_polygons(polys, layer=layer, zorder=zorder, **mpl)
 
     def plot_hst_halo(self, union=True, layer=False, zorder=None, **mpl):
         """Plot the Brown et al HST/ACS halo footprints."""

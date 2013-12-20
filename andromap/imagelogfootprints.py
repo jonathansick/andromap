@@ -14,14 +14,13 @@ import numpy as np
 from .polytools import close_vertices, polygon_union
 
 
-def get_combined_image_footprint(sel):
-    """Get image footprints and combine them.
+def get_image_footprints(sel):
+    """Get image footprints.
     
     Returns
     -------
-    verts : list
-        A list of one or more Nx2 Numpy arrays which contain the [x, y]
-        positions of the vertices in world coordinates.
+    footprints : dict
+        Dictionary of names mapping to footprints (as numpy vertex arrays).
     """
     log = logging.getLogger('andromap')
     client = MongoClient(host='localhost', port=27017)
@@ -31,8 +30,22 @@ def get_combined_image_footprint(sel):
     log.debug("Found %i footprints" % docs.count())
     if docs.count() == 0:
         return None
-    polygons = [doc['footprint'] for doc in docs]
-    polygons = [close_vertices(p) for p in polygons]
+    footprints = {d['_id']: np.array(close_vertices(d['footprint']))
+        for d in docs}
+    return footprints
+
+
+def get_combined_image_footprint(sel):
+    """Get image footprints and combine them.
+    
+    Returns
+    -------
+    verts : list
+        A list of one or more Nx2 Numpy arrays which contain the [x, y]
+        positions of the vertices in world coordinates.
+    """
+    footprints = get_image_footprints(sel)
+    polygons = [footprint for k, footprint in footprints.iteritems()]
     return polygon_union(polygons)
 
 

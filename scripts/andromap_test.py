@@ -34,7 +34,7 @@ def main():
     m.plot_combined_fields({"INSTRUME": "MegaPrime", "lsb_mosaic.kind": "sci"})
     # m.plot_phat(union=True)
     m.plot_phat_fields(union=False, edgecolor='None', facecolor='r',
-        zorder=10, alpha=0.2)
+        zorder=10, alpha=0.2, band="F110W")
     m.plot_hst_halo()
     m.save("andromap_test.pdf", dpi=300, transparent=True, adjust_bbox=True,
             format='pdf')
