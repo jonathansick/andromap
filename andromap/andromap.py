@@ -6,6 +6,7 @@ import os
 import logging
 import json
 
+import numpy as np
 import aplpy
 
 from .imagelogfootprints import get_combined_image_footprint, \
@@ -119,12 +120,19 @@ class Andromap(object):
             polys = [v for k, v in footprints.iteritems()]
             self._f.show_polygons(polys, layer=layer, zorder=zorder, **mpl)
 
-    def plot_hst_halo(self, union=True, layer=False, zorder=None, **mpl):
+    def plot_hst_halo(self, union=True, layer=False, zorder=None,
+            label=None, **mpl):
         """Plot the Brown et al HST/ACS halo footprints."""
         polydict = get_acs_halo_fields()
         polygons = [p for n, p in polydict.iteritems()]
         if polygons is None: return
         self._f.show_polygons(polygons, layer=layer, zorder=zorder, **mpl)
+        if label:
+            for name, poly in polydict.iteritems():
+                x = np.array([v[0] for v in poly]).mean()
+                y = np.array([v[1] for v in poly]).mean()
+                self._f.add_label(x, y - 0.05, name, size=7,
+                        verticalalignment='top')
 
     def plot_narrowband_fields(self, names, union=True, layer=False,
         zorder=None, **mpl):
