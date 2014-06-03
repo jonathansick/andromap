@@ -6,29 +6,25 @@ import glob
 
 
 setup(
-    name = "andromap",
-    version = "0.1",
-    packages = find_packages(),
-    scripts = glob.glob('scripts/*.py'),
+    name="andromap",
+    version="0.1",
+    packages=find_packages(),
+    scripts=glob.glob('scripts/*.py'),
 
-    # Project uses reStructuredText, so ensure that the docutils get
-    # installed or upgraded on the target machine
-    # install_requires = ['docutils>=0.3'],
+    install_requires=['numpy',
+                      'matplotlib',
+                      'pil',
+                      'aplpy',
+                      'pymongo',
+                      'shapely'],
 
-    package_data = {
-        # If any package contains *.txt or *.rst files, include them:
-        '': ['*.txt', '*.rst'],
-        # # And include any *.msg files found in the 'hello' package, too:
-        # 'hello': ['*.msg'],
-    },
+    package_data={'': ['*.txt', '*.rst']},
 
     # metadata for upload to PyPI
-    author = "Jonathan Sick",
-    author_email = "jonathansick@mac.com",
-    description = "Package for making maps of the ANDROIDS survey footprint",
-    license = "BSD",
-    keywords = "astronomy",
-    url = "http://jonathansick.ca",   # project home page, if any
-
-    # could also include long_description, download_url, classifiers, etc.
+    author="Jonathan Sick",
+    author_email="jonathansick@mac.com",
+    description="Package for making maps of the ANDROIDS survey footprint",
+    license="BSD",
+    keywords="astronomy",
+    url="https://github.com/jonathansick/andromap",
 )

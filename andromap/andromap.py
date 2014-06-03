@@ -76,6 +76,13 @@ class Andromap(object):
                     adjust_bbox=adjust_bbox,
                     max_dpi=max_dpi, format=format)
 
+    def plot_fields(self, sel, layer=False, zorder=None, **mpl):
+        """Plot individual image footprints."""
+        polydict = get_image_footprints(sel)
+        polygons = [p for n, p in polydict.iteritems()]
+        if polygons is None: return
+        self._f.show_polygons(polygons, layer=layer, zorder=zorder, **mpl)
+
     def plot_combined_fields(self, sel, layer=False, zorder=None, **mpl):
         """Plot unions of image footprints."""
         polygons = get_combined_image_footprint(sel)
