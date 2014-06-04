@@ -159,23 +159,28 @@ class Andromap(object):
             polygons = polygon_union(polygons)
         self._f.show_polygons(polygons, layer=layer, zorder=zorder, **mpl)
 
-    def plot_profile_ellipse_grid(self, prof, radii,
-                                  layer=False, zorder=None, **mpl):
+    def plot_xvista_profile_ellipse_grid(self, prof, radii,
+                                         layer=False, zorder=None, **mpl):
         """Plot ellipses from an XVISTA SB profile at a specified grid of
         radii (given in kiloparsecs).
         """
         R = D_KPC * np.tan(prof['R'] / 3600. * np.pi / 180.)
+        # print R
         PA = prof['PA']
         ELL = prof['ELL']
+        # print prof['ELL']
+        print prof['KPC', 'ELL'][::50]
 
         polygons = []
         for r_kpc, pa, ell in ellipse_generator(R, PA, ELL, radii):
             r_deg = np.arctan(r_kpc / D_KPC) * 180. / np.pi
             b_deg = (1. - ell) * r_deg  # semi-minor axis
             print r_kpc, r_deg, b_deg, ell, pa
-            pa = pa - 90.  # make PA CCW from north
+            # XVISTA pa is from +x axis (which points rightwards), out
+            # PA must be CCW from north
+            pa = 90. - pa  # THIS WORKS
             poly = ellipse_polygon(r_deg, b_deg, pa, M31RA0, M31DEC0,
-                                   n_verts=10)
+                                   n_verts=1000)
             polygons.append(poly)
 
         self._f.show_polygons(polygons, layer=layer, zorder=zorder, **mpl)
@@ -201,13 +206,11 @@ def ellipse_polygon(r_deg, b_deg, pa, ra0, dec0, n_verts=1000):
     # Parametric angle
     t = np.linspace(0., 2. * np.pi, num=n_verts, endpoint=False)
     # Transform PA to radians
-    # like xvista, treat as is the angle between the X-axis and the major
-    # axis of the ellipse.
     p = pa * np.pi / 180.
     # Parametric equation for an ellipse centered at origin
-    X = r_deg * np.cos(t) * np.cos(p) - b_deg * np.sin(t) * np.sin(p)
-    Y = r_deg * np.cos(t) * np.sin(p) - b_deg * np.sin(t) * np.cos(p)
+    # note that the x-axis is reverse; increases to left
+    X = - (r_deg * np.cos(t) * np.cos(p) - b_deg * np.sin(t) * np.sin(p))
+    Y = r_deg * np.cos(t) * np.sin(p) + b_deg * np.sin(t) * np.cos(p)
     ras, decs = tan_to_eq(X, Y, ra0Deg=ra0, dec0Deg=dec0)
     verts = np.vstack([ras, decs]).T
-    print verts
     return verts
