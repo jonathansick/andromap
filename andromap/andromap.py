@@ -169,9 +169,10 @@ class Andromap(object):
         ELL = prof['ELL']
 
         polygons = []
-        for r_kpc, ell, pa in ellipse_generator(R, PA, ELL, radii):
+        for r_kpc, pa, ell in ellipse_generator(R, PA, ELL, radii):
             r_deg = np.arctan(r_kpc / D_KPC) * 180. / np.pi
             b_deg = (1. - ell) * r_deg  # semi-minor axis
+            print r_kpc, r_deg, b_deg, ell, pa
             poly = ellipse_polygon(r_deg, b_deg, pa, M31RA0, M31DEC0)
             polygons.append(poly)
 
@@ -198,12 +199,10 @@ def ellipse_polygon(r_deg, b_deg, pa, ra0, dec0, n_verts=1000):
     # Parametric angle
     t = np.linspace(0., 2. * np.pi, num=n_verts, endpoint=False)
     # Transform PA to be relative to the +xi axis (originally CCW from +eta)
-    p = 90. - pa
+    p = (90. - pa) * np.pi / 180.
     # Parametric equation for an ellipse centered at origin
     X = r_deg * np.cos(t) * np.cos(p) - b_deg * np.sin(t) * np.sin(p)
     Y = r_deg * np.cos(t) * np.sin(p) - b_deg * np.sin(t) * np.cos(p)
     ras, decs = tan_to_eq(X, Y, ra0Deg=ra0, dec0Deg=dec0)
-    # verts = zip(ras, decs)
     verts = np.vstack([X, Y]).T
-    print verts.shape
     return verts
