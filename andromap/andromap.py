@@ -200,8 +200,10 @@ def ellipse_polygon(r_deg, b_deg, pa, ra0, dec0, n_verts=1000):
     """Make a polygon with RA,Dec vertices from an ellipse."""
     # Parametric angle
     t = np.linspace(0., 2. * np.pi, num=n_verts, endpoint=False)
-    # Transform PA to be relative to the +xi axis (originally CCW from +eta)
-    p = (90. - pa) * np.pi / 180.
+    # Transform PA to radians
+    # like xvista, treat as is the angle between the X-axis and the major
+    # axis of the ellipse.
+    p = pa * np.pi / 180.
     # Parametric equation for an ellipse centered at origin
     X = r_deg * np.cos(t) * np.cos(p) - b_deg * np.sin(t) * np.sin(p)
     Y = r_deg * np.cos(t) * np.sin(p) - b_deg * np.sin(t) * np.cos(p)
