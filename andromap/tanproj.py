@@ -2,15 +2,10 @@
 # encoding: utf-8
 """
 Tangent-plane projection transformations around M31.
-
-2013-12-11 - Created by Jonathan Sick
 """
 
 import numpy as np
-
-
-M31RA0 = 10.6846833
-M31DEC0 = 41.2690361
+from .constants import M31RA0, M31DEC0
 
 
 def eq_to_tan(ra, dec, ra0=M31RA0, dec0=M31DEC0):
