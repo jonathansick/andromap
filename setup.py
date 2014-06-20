@@ -13,6 +13,7 @@ setup(
 
     install_requires=['numpy',
                       'matplotlib',
+                      'astropy',
                       'pil',
                       'aplpy',
                       'pymongo',
