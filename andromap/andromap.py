@@ -78,6 +78,16 @@ class Andromap(object):
                     adjust_bbox=adjust_bbox,
                     max_dpi=max_dpi, format=format)
 
+    def add_label(self, ra, dec, txt):
+        """Add a text label at the world coordinates."""
+        self._f.add_label(ra, dec, txt)
+
+    def plot_box(self, ra, dec, width, height,
+                 layer=False, zorder=None, **mpl):
+        """Plot a rectangle in world coordinates."""
+        self._f.show_rectangles(ra, dec, width, height,
+                                layer=layer, zorder=zorder, **mpl)
+
     def plot_fields(self, sel, layer=False, zorder=None, **mpl):
         """Plot individual image footprints."""
         polydict = get_image_footprints(sel)
