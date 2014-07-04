@@ -58,24 +58,35 @@ def main():
         {'ra': (0, 31., 27.235), 'dec': (42, 11, 42.97), 'n': 'NW6'},
         {'ra': (0, 31., 18.318), 'dec': (43, 6, 58.70), 'n': 'NW7'}]
     perimeter_fields = [
-        {'ra': (0, 41, 47.547), 'dec': (43, 05, 05.51), 'n': 'N1'},
-        {'ra': (0, 36, 46.869), 'dec': (42, 9, 03.14), 'n': 'N2'},
-        {'ra': (0, 32, 54.665), 'dec': (41, 12, 46.38), 'n': 'N3'},
-        {'ra': (0, 52, 25.926), 'dec': (41, 13, 58.31), 'n': 'S1'},
-        {'ra': (0, 49, 42.631), 'dec': (40, 22, 23.89), 'n': 'S2'},
-        {'ra': (0, 45, 49.648), 'dec': (39, 25, 19.53), 'n': 'S3'},
-        {'ra': (0, 30, 25.494), 'dec': (40, 16, 08.21), 'n': 'N4'},
-        {'ra': (0, 50, 19.185), 'dec': (43, 56, 57.26), 'n': 'NE1'},
-        {'ra': (0, 55, 15.200), 'dec': (43, 55, 12.99), 'n': 'NE2'},
-        {'ra': (0, 56, 27.736), 'dec': (43, 03, 57.23), 'n': 'NE3'},
-        {'ra': (0, 30, 36.378), 'dec': (38, 24, 08.19), 'n': 'SW1'},
-        {'ra': (0, 34, 51.415), 'dec': (38, 26, 03.58), 'n': 'SW2'},
-        {'ra': (0, 39, 13.450), 'dec': (38, 27, 22.95), 'n': 'SW3'}]
+        {'ra': (0, 50, 19.185), 'dec': (43, 56, 57.26), 'n': 'N1'},
+        {'ra': (0, 55, 15.200), 'dec': (43, 55, 12.99), 'n': 'N2'},
+        {'ra': (0, 56, 27.736), 'dec': (43, 03, 57.23), 'n': 'N3'},
+        {'ra': (0, 52, 25.926), 'dec': (41, 13, 58.31), 'n': 'E1'},
+        {'ra': (0, 49, 42.631), 'dec': (40, 22, 23.89), 'n': 'E2'},
+        {'ra': (0, 45, 49.648), 'dec': (39, 25, 19.53), 'n': 'E3'},
+        {'ra': (0, 39, 13.450), 'dec': (38, 27, 22.95), 'n': 'S1'},
+        {'ra': (0, 34, 51.415), 'dec': (38, 26, 03.58), 'n': 'S2'},
+        {'ra': (0, 30, 36.378), 'dec': (38, 24, 08.19), 'n': 'S3'},
+        {'ra': (0, 30, 25.494), 'dec': (40, 16, 08.21), 'n': 'W1'},
+        {'ra': (0, 32, 54.665), 'dec': (41, 12, 46.38), 'n': 'W2'},
+        {'ra': (0, 36, 46.869), 'dec': (42, 9, 03.14), 'n': 'W3'},
+        {'ra': (0, 41, 47.547), 'dec': (43, 05, 05.51), 'n': 'W4'}]
+    new_sky_fields = [
+        {'ra': (0, 42., 0.), 'dec': (45., 22., 0), 'n': 'S9'},
+        {'ra': (1., 6., 0.), 'dec': (42., 15., 0), 'n': 'S10'},
+        {'ra': (1., 1., 0.), 'dec': (38., 55., 0), 'n': 'S11'},
+        {'ra': (0., 47., 0.), 'dec': (37., 40., 0), 'n': 'S12'},
+        {'ra': (0., 30., 0.), 'dec': (36., 10., 0), 'n': 'S13'},
+        {'ra': (0., 18., 0.), 'dec': (41., 20., 0), 'n': 'S14'},
+        {'ra': (0., 28., 0.), 'dec': (43., 40., 0), 'n': 'S15'},
+    ]
     for field in sky_fields:
         convert_field_coord(field)
     for field in square_fields:
         convert_field_coord(field)
     for field in perimeter_fields:
+        convert_field_coord(field)
+    for field in new_sky_fields:
         convert_field_coord(field)
 
     pngpath = os.path.expanduser("~/andromap/Elixir_B3_r.resamp.inverted.png")
@@ -88,17 +99,9 @@ def main():
     m.plot_xvista_profile_ellipse_grid(prof, radii, zorder=100,
                                        edgecolor='r')
 
-    m.plot_combined_fields({"INSTRUME": "WIRCam", "TYPE": "sci"})
-    # m.plot_combined_fields({"INSTRUME": "WIRCam", "TYPE": "sky",
-    #                         "RUNID": {"$in": ['07BC20', '07BH47']}})
-    # m.plot_combined_fields({"INSTRUME": "WIRCam", "TYPE": "sky",
-    #                         "RUNID": {"$in": ['09BH52', '09BC29',
-    #                                           '11BC12', '12BH04']}})
-    m.plot_combined_fields({"INSTRUME": "MegaPrime", "lsb_mosaic.kind": "sci"})
-    # m.plot_phat(union=True)
-    # m.plot_phat_fields(union=False, edgecolor='None', facecolor='r',
-    #     zorder=10, alpha=0.2, band="F110W")
-    m.plot_hst_halo()
+    # m.plot_combined_fields({"INSTRUME": "WIRCam", "TYPE": "sci"})
+    # m.plot_combined_fields({"INSTRUME": "MegaPrime", "lsb_mosaic.kind": "sci"})
+    # m.plot_hst_halo()
     for field in sky_fields:
         m.plot_box(field['ra'], field['dec'], width=1., height=1.,
                    facecolor='None', edgecolor='orange', lw=1.)
@@ -107,15 +110,21 @@ def main():
         m.plot_box(field['ra'], field['dec'], width=1., height=1.,
                    facecolor='dodgerblue', alpha=0.7, edgecolor='dodgerblue',
                    lw=1.)
+        m.add_label(field['ra'], field['dec'], field['n'])
+    for field in new_sky_fields:
+        m.plot_box(field['ra'], field['dec'], width=1., height=1.,
+                   facecolor='None', alpha=1., edgecolor='dodgerblue',
+                   lw=1.)
+        m.add_label(field['ra'], field['dec'], field['n'])
 
-    m.fig.recenter(M31RA0, M31DEC0, radius=4)  # , width=9, height=9)
-    m.save("cfht_lsb_14b.pdf", dpi=300, transparent=True, adjust_bbox=True,
-           format='pdf')
+    m.fig.recenter(M31RA0, M31DEC0, radius=6)  # , width=9, height=9)
+    m.save("cfht_lsb_14b.png", dpi=300, transparent=True, adjust_bbox=True,
+           format='png')
 
 
 def convert_field_coord(field):
     field['ra'] = 15. * (float(field['ra'][0]) + field['ra'][1] / 60.
-                            + field['ra'][1] / 3600.)
+                         + field['ra'][1] / 3600.)
     field['dec'] = float(field['dec'][0]) + field['dec'][1] / 60. \
         + field['dec'][1] / 3600.
 
