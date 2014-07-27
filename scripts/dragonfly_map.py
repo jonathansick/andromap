@@ -74,6 +74,9 @@ def main():
     print c1.ra.hms, c1.dec.dms
     print c2.ra.hms, c2.dec.dms
     print c3.ra.hms, c3.dec.dms
+    print "North: {0:8f} {1:8f}".format(c1.ra.degree, c1.dec.degree)
+    print "Central: {0:8f} {1:8f}".format(c2.ra.degree, c2.dec.degree)
+    print "South: {0:8f} {1:8f}".format(c3.ra.degree, c3.dec.degree)
 
 
 if __name__ == '__main__':
