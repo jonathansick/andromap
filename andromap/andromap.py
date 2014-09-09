@@ -79,9 +79,9 @@ class Andromap(object):
                          adjust_bbox=adjust_bbox,
                          max_dpi=max_dpi, format=format)
 
-    def add_label(self, ra, dec, txt):
+    def add_label(self, ra, dec, txt, **args):
         """Add a text label at the world coordinates."""
-        self._f.add_label(ra, dec, txt)
+        self._f.add_label(ra, dec, txt, **args)
 
     def plot_box(self, ra, dec, width, height,
                  layer=False, zorder=None, **mpl):
@@ -96,6 +96,16 @@ class Andromap(object):
         if polygons is None:
             return
         self._f.show_polygons(polygons, layer=layer, zorder=zorder, **mpl)
+
+    def plot_field_labels(self, sel, **args):
+        """Plot the names for individual fields"""
+        polydict = get_image_footprints(sel)
+        for name, poly in polydict.iteritems():
+            xs = [p[0] for p in poly]
+            ys = [p[1] for p in poly]
+            xi = 0.5 * (max(xs) + min(xs))
+            yi = 0.5 * (max(ys) + min(ys))
+            self.add_label(xi, yi, name, **args)
 
     def plot_combined_fields(self, sel, layer=False, zorder=None, **mpl):
         """Plot unions of image footprints."""
