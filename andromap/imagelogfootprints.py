@@ -25,7 +25,7 @@ def get_image_footprints(sel):
     log = logging.getLogger('andromap')
     client = MongoClient(host='localhost', port=27017)
     c = client.m31.images
-    docs = c.find(sel, fields=['footprint'])
+    docs = c.find(sel, projection=['footprint'])
     log.debug("Looking for footprints from %s" % str(sel))
     log.debug("Found %i footprints" % docs.count())
     if docs.count() == 0:
