@@ -19,11 +19,12 @@ from .tanproj import tan_to_eq
 
 class Andromap(object):
     """This class plots ANDROIDS maps/footprints with an image using Aplpy.
-    
+
     Parameters
     ----------
-    fitspath : str
-        Path to a FITS image (or a AVM-enabled JPG/PNG image).
+    dataset : str or HDU
+        Path to a FITS image (or a AVM-enabled JPG/PNG image), or an
+        astropy.fits HDU.
     fig : Figure
         A matplotlib Figure instance to plot into
     subplot : list
@@ -35,22 +36,22 @@ class Andromap(object):
     kw :
         Arguments passed directly to the ``aplpy.FITSFigure`` constructor.
     """
-    def __init__(self, fitspath, fig=None, subplot=(1, 1, 1),
-            figsize=(3.5, 3.5), **kw):
+    def __init__(self, dataset, fig=None, subplot=(1, 1, 1),
+                 figsize=(3.5, 3.5), **kw):
         super(Andromap, self).__init__()
-        self.fitspath = fitspath
+        self.dataset = dataset
         self._figure = fig
         self._subplot = subplot
         self._log = logging.getLogger('andromap')
 
-        if (self._figure is not None) and (self._subplot_bounds is not None):
+        if self._figure is not None:
             # Put Aplpy axes into an existing axis
-            self._f = aplpy.FITSFigure(fitspath, figure=self._figure,
-                    subplot=self._subplot, **kw)
+            self._f = aplpy.FITSFigure(dataset, figure=self._figure,
+                                       subplot=self._subplot, **kw)
         else:
             # Let Aplpy set it all up
-            self._f = aplpy.FITSFigure(fitspath, figsize=figsize,
-                    subplot=self._subplot, **kw)
+            self._f = aplpy.FITSFigure(dataset, figsize=figsize,
+                                       subplot=self._subplot, **kw)
 
         # Set up typography
         self._f.set_system_latex('True')
@@ -60,9 +61,9 @@ class Andromap(object):
     def fig(self):
         """The Aplypy FITSFigure instance"""
         return self._f
-    
+
     def save(self, path, dpi=300, transparent=False, adjust_bbox=True,
-            max_dpi=300, format='pdf'):
+             max_dpi=300, format='pdf'):
         """Save the figure."""
         if not path.endswith(format):
             path = path + "." + format
@@ -75,8 +76,8 @@ class Andromap(object):
         else:
             # Save through Aplpy
             self._f.save(path, dpi=dpi, transparent=transparent,
-                    adjust_bbox=adjust_bbox,
-                    max_dpi=max_dpi, format=format)
+                         adjust_bbox=adjust_bbox,
+                         max_dpi=max_dpi, format=format)
 
     def add_label(self, ra, dec, txt):
         """Add a text label at the world coordinates."""
@@ -92,13 +93,15 @@ class Andromap(object):
         """Plot individual image footprints."""
         polydict = get_image_footprints(sel)
         polygons = [p for n, p in polydict.iteritems()]
-        if polygons is None: return
+        if polygons is None:
+            return
         self._f.show_polygons(polygons, layer=layer, zorder=zorder, **mpl)
 
     def plot_combined_fields(self, sel, layer=False, zorder=None, **mpl):
         """Plot unions of image footprints."""
         polygons = get_combined_image_footprint(sel)
-        if polygons is None: return
+        if polygons is None:
+            return None
         self._f.show_polygons(polygons, layer=layer, zorder=zorder, **mpl)
 
     def plot_phat(self, union=True, layer=False, zorder=None, **mpl):
@@ -108,14 +111,15 @@ class Andromap(object):
         else:
             polydict = get_phat_bricks()
             polygons = [p for n, p in polydict.iteritems()]
-        if polygons is None: return
+        if polygons is None:
+            return None
         self._f.show_polygons(polygons, layer=layer, zorder=zorder, **mpl)
 
     def plot_phat_fields(self, band="F160W", bricks=None, fields=None,
-            union=True, layer=False, zorder=None, **mpl):
+                         union=True, layer=False, zorder=None, **mpl):
         """Plot the PHAT footprint from individual field footprints rather than
         brick-by-brick.
-        
+
         Parameters
         ----------
         band : str
@@ -132,7 +136,8 @@ class Andromap(object):
             sel['field'] = {"$in": fields}
         if union:
             polygons = get_combined_image_footprint(sel)
-            if polygons is None: return
+            if polygons is None:
+                return None
             self._f.show_polygons(polygons, layer=layer, zorder=zorder, **mpl)
         else:
             footprints = get_image_footprints(sel)
@@ -140,18 +145,19 @@ class Andromap(object):
             self._f.show_polygons(polys, layer=layer, zorder=zorder, **mpl)
 
     def plot_hst_halo(self, union=True, layer=False, zorder=None,
-            label=None, **mpl):
+                      label=None, **mpl):
         """Plot the Brown et al HST/ACS halo footprints."""
         polydict = get_acs_halo_fields()
         polygons = [p for n, p in polydict.iteritems()]
-        if polygons is None: return
+        if polygons is None:
+            return
         self._f.show_polygons(polygons, layer=layer, zorder=zorder, **mpl)
         if label:
             for name, poly in polydict.iteritems():
                 x = np.array([v[0] for v in poly]).mean()
                 y = np.array([v[1] for v in poly]).mean()
                 self._f.add_label(x, y - 0.05, name, size=7,
-                        verticalalignment='top')
+                                  verticalalignment='top')
 
     def plot_narrowband_fields(self, names, union=True, layer=False,
                                zorder=None, **mpl):
@@ -159,7 +165,7 @@ class Andromap(object):
         if isinstance(names, str) or isinstance(names, unicode):
             names = [names]
         data_path = os.path.join(os.path.abspath(os.path.dirname(__file__)),
-                "data/narrowband_fields.json")
+                                 "data/narrowband_fields.json")
         self._log.debug("Data path: {path}".format(path=data_path))
         with open(data_path) as f:
             field_data = json.loads(f.read())
@@ -198,7 +204,7 @@ class Andromap(object):
 
 def ellipse_generator(R, PA, ELL, radii):
     """Generate interpolated ellipses at the given radii (kpc).
-    
+
     The generate will continue to make ellipses past the profile by maintaining
     PA and ellipticity from the last profile ellipse.
     """
