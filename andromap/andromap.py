@@ -7,6 +7,8 @@ import logging
 import json
 
 import numpy as np
+from astropy.coordinates import SkyCoord
+import astropy.units as u
 import aplpy
 
 from .imagelogfootprints import get_combined_image_footprint, \
@@ -81,6 +83,7 @@ class Andromap(object):
 
     def add_label(self, ra, dec, txt, **args):
         """Add a text label at the world coordinates."""
+        print ra, dec
         self._f.add_label(ra, dec, txt, **args)
 
     def plot_box(self, ra, dec, width, height,
@@ -88,6 +91,25 @@ class Andromap(object):
         """Plot a rectangle in world coordinates."""
         self._f.show_rectangles(ra, dec, width, height,
                                 layer=layer, zorder=zorder, **mpl)
+
+    def compute_mean_coordinate(self, sel):
+        """Compute the mean coordinate of the selected fields.
+
+        Returns a SkyCoord.
+        """
+        polydict = get_image_footprints(sel)
+        x_centers = []
+        y_centers = []
+        for name, poly in polydict.iteritems():
+            xs = [p[0] for p in poly]
+            ys = [p[1] for p in poly]
+            xi = 0.5 * (max(xs) + min(xs))
+            yi = 0.5 * (max(ys) + min(ys))
+            x_centers.append(xi)
+            y_centers.append(yi)
+        xc = np.array(x_centers).mean()
+        yc = np.array(y_centers).mean()
+        return SkyCoord(xc * u.deg, yc * u.deg)
 
     def plot_fields(self, sel, layer=False, zorder=None, **mpl):
         """Plot individual image footprints."""
